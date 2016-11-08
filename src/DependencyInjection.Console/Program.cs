@@ -26,18 +26,19 @@ namespace DependencyInjection.Console
             };
             optionSet.Parse(args);
 
-            var writer = new AsciiWriter();
-            var characterWriter = useColors ? (ICharacterWriter)new ColorWriter(writer) : writer;
-
+            var characterWriter = GetCharacterWriter(useColors);
             var patternWriter = new PatternWriter(characterWriter);
-
             var squarePainter = GetSquarePainter(pattern);
-
             var patternGenerator = new PatternGenerator(squarePainter);
-
             var app = new PatternApp(patternWriter, patternGenerator);
 
             app.Run(width, height);
+        }
+
+        private static ICharacterWriter GetCharacterWriter(bool useColors)
+        {
+            var writer = new AsciiWriter();
+            return useColors ? (ICharacterWriter)new ColorWriter(writer) : writer;
         }
 
         private static ISquarePainter GetSquarePainter(string pattern)
