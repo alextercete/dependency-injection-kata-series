@@ -15,7 +15,7 @@ namespace DependencyInjection.Console
             var useColors = false;
             var width = 25;
             var height = 15;
-            var pattern = "circle"; // TODO: Hook this up
+            var pattern = "circle";
 
             var optionSet = new OptionSet
             {
