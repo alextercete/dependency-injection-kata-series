@@ -1,4 +1,5 @@
-﻿using DependencyInjection.Console.CharacterWriters;
+﻿using System;
+using DependencyInjection.Console.CharacterWriters;
 using DependencyInjection.Console.SquarePainters;
 using NDesk.Options;
 
@@ -27,13 +28,28 @@ namespace DependencyInjection.Console
 
             var patternWriter = new PatternWriter(characterWriter);
 
-            var squarePainter = new CircleSquarePainter();
+            var squarePainter = GetSquarePainter(pattern);
 
             var patternGenerator = new PatternGenerator(squarePainter);
 
             var app = new PatternApp(patternWriter, patternGenerator);
 
             app.Run(width, height);
+        }
+
+        private static ISquarePainter GetSquarePainter(string pattern)
+        {
+            switch (pattern)
+            {
+                case "circle":
+                    return new CircleSquarePainter();
+                case "oddeven":
+                    return new OddEvenSquarePainter();
+                case "white":
+                    return new WhiteSquarePainter();
+                default:
+                    throw new Exception($"Pattern {pattern} unknown");
+            }
         }
     }
 }
