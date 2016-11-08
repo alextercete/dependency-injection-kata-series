@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using DependencyInjection.Console.CharacterWriters;
 using DependencyInjection.Console.SquarePainters;
 using NDesk.Options;
@@ -39,17 +42,21 @@ namespace DependencyInjection.Console
 
         private static ISquarePainter GetSquarePainter(string pattern)
         {
-            switch (pattern)
+            var type = GetDerivedTypesOf<ISquarePainter>().FirstOrDefault(
+                t => t.Name.Equals($"{pattern}SquarePainter", StringComparison.InvariantCultureIgnoreCase));
+
+            if (type == null)
             {
-                case "circle":
-                    return new CircleSquarePainter();
-                case "oddeven":
-                    return new OddEvenSquarePainter();
-                case "white":
-                    return new WhiteSquarePainter();
-                default:
-                    throw new Exception($"Pattern {pattern} unknown");
+                throw new Exception($"Pattern {pattern} unknown");
             }
+            return (ISquarePainter) Activator.CreateInstance(type);
+        }
+
+        private static IEnumerable<Type> GetDerivedTypesOf<T>()
+        {
+            var superType = typeof(T);
+            var assembly = Assembly.GetAssembly(superType);
+            return assembly.GetTypes().Where(type => type != superType && superType.IsAssignableFrom(type));
         }
     }
 }
