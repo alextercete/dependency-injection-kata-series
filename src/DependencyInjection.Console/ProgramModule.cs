@@ -17,10 +17,8 @@ namespace DependencyInjection.Console
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterInstance(GetCharacterWriter(_options.UseColors));
-            builder.RegisterType<PatternWriter>();
             builder.RegisterInstance(GetSquarePainter(_options.Pattern));
-            builder.RegisterType<PatternGenerator>();
-            builder.RegisterType<PatternApp>();
+            builder.RegisterAssemblyTypes(ThisAssembly);
         }
 
         private static ICharacterWriter GetCharacterWriter(bool useColors)
