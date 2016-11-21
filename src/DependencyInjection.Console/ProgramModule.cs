@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Autofac.Core;
 using DependencyInjection.Console.CharacterWriters;
 using DependencyInjection.Console.SquarePainters;
 
@@ -20,14 +21,13 @@ namespace DependencyInjection.Console
             builder.RegisterType<WhiteSquarePainter>().Named<ISquarePainter>("white");
             builder.Register(c => c.ResolveNamed<ISquarePainter>(_options.Pattern));
 
-            builder.RegisterInstance(GetCharacterWriter(_options.UseColors));
-            builder.RegisterAssemblyTypes(ThisAssembly);
-        }
+            builder.RegisterType<AsciiWriter>().Keyed<ICharacterWriter>(false);
+            builder.RegisterType<ColorWriter>()
+                .WithParameter(ResolvedParameter.ForKeyed<ICharacterWriter>(false))
+                .Keyed<ICharacterWriter>(true);
+            builder.Register(c => c.ResolveKeyed<ICharacterWriter>(_options.UseColors));
 
-        private static ICharacterWriter GetCharacterWriter(bool useColors)
-        {
-            var writer = new AsciiWriter();
-            return useColors ? (ICharacterWriter)new ColorWriter(writer) : writer;
+            builder.RegisterAssemblyTypes(ThisAssembly);
         }
     }
 }
