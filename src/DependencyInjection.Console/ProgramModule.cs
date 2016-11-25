@@ -7,20 +7,18 @@ namespace DependencyInjection.Console
 {
     internal class ProgramModule : Module
     {
-        private readonly bool _useColors;
-        private readonly string _pattern;
+        private readonly ProgramOptions _options;
 
-        public ProgramModule(bool useColors, string pattern)
+        public ProgramModule(ProgramOptions options)
         {
-            _useColors = useColors;
-            _pattern = pattern;
+            _options = options;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterInstance(GetCharacterWriter(_useColors));
+            builder.RegisterInstance(GetCharacterWriter(_options.UseColors));
             builder.RegisterType<PatternWriter>();
-            builder.RegisterInstance(GetSquarePainter(_pattern));
+            builder.RegisterInstance(GetSquarePainter(_options.Pattern));
             builder.RegisterType<PatternGenerator>();
             builder.RegisterType<PatternApp>();
         }
